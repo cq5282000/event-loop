@@ -1,0 +1,450 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/index.css">
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<div class="mask">
+						<svg class="title" viewBox="0 0 100 50" style="width: 80%">
+							<path id="curve" d="M 10 50 a 40 40 0 0 1 80 0" fill="transparent" />
+							<text font-family="cursive">
+								<textPath font-size=".5em" textLength="125" xlink:href="#curve">
+									Further Adventures of
+								</textPath>
+							</text>
+						</svg>
+					</div>
+					<h1>The Event Loop</h1> 
+				</section>
+				<section>
+					<h2 style="font-size: 1em">What actually is the Event Loop?</h2>
+				</section>
+				<section>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+			while (true) {
+			  <span class="variable-name">task</span> = taskQueue.pop();
+			  execute(<span class="variable-name">task</span>);
+			}
+						</code></pre>
+				</section>
+				<section>
+					<div class="list-and-image">
+						<ul>
+							<li class="fragment">What's a task?</li>
+							<li class="fragment">What's a task&nbsp;queue?</li>
+							<li class="fragment">How do tasks<br />get in the task&nbsp;queue?</li>
+						</ul>
+						<img src="css/Philosoraptor.jpg" />
+					</div>
+				</section>
+				<section data-state="web-apis">
+					<fieldset class="browser-internals">
+						<div class="browser-bits">
+							<img src="css/browser.png" class="fragment"  />
+							<img src="css/node.png" class="fragment" />
+						</div>
+					</fieldset>
+				</section>
+				<section>
+						<legend>task</legend>
+						<pre>
+							<code data-noescape class="js" style="font-size: 1em">
+<<span class="variable-name">script</span>>
+	const foo = bar();
+	foo.doSomething();
+	document.body.addEventListener('keydone', (event) => {
+	<span class="variable-name">
+		if(event.key === 'PageDown') {
+			location.href = '/#/36';
+		}
+	</span>
+	})
+<<span class="variable-name">/script</span>>
+							</code>
+						</pre>
+				</section>
+				<section>
+					<section>
+						<fieldset class="browser-internals">
+							<legend>task queue</legend>
+							<div class="browser-bits">
+								<img src="css/JavaScript-logo.png" />
+								<img src="css/mouse-pointer.svg"/>
+								<img src="css/wifi.png"/>
+								<img src="css/time.png" />
+							</div>
+						</fieldset>						
+					</section>
+				</section>
+				<section>
+					<fieldset>
+						<legend>task queue</legend>
+						<div>
+							<img src="css/queue.png" />
+						</div>
+					</fieldset>						
+				</section>
+				<section>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+			while (true) {
+			  <span class="variable-name">task</span> = taskQueue.pop();
+			  execute(<span class="variable-name">task</span>);
+			}
+						</code></pre>
+				</section>
+				<section>
+					<legend>More complicated in actual</legend>
+					<ul style="margin-top: .5em;">
+						<li>
+							taskQueue		
+						</li>
+						<li>
+							rendering pipeline		
+						</li>
+					</ul>
+				</section>
+				<section>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+	while (true) {
+
+	  <span class="variable-name">task</span> = taskQueue.pop();
+	  execute(<span class="variable-name">task</span>);
+
+	  if (isRepaintTie()) repaint();
+
+	}
+	
+						</code></pre>
+				</section>
+				<section>
+					<legend>running very long task</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+	function() <span class="variable-name">veryLongTask</span>() {
+
+	  firstPartOfTask();
+	  setTimeout(restOfTheTask);
+
+	}
+						</code></pre>
+				</section>
+				<section>
+					<legend>More complicated in actual</legend>
+					<ul style="margin-top: .5em;">
+						<li>
+							an Event loop has one or more taskqueues	
+						</li>
+					</ul>
+				</section>
+				<section>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							queue can be excuted in any order		
+						</li>
+						<li style="margin-top: .5em">
+							task in the same queue must be excuted in the order they arrived		
+						</li>
+						<li style="margin-top: .5em">
+							task from the same source must go in the same queue	
+						</li>
+					</ul>
+				</section>
+				<section>
+						<legend>running very long task</legend>
+							<pre><code data-noescape class="js" style="font-size: 1em">
+	while(true) {
+
+	  <span class="variable-name">queue</span> = getNextQueue();
+	  <span class="variable-name">task</span> = queue.pop();
+	  excute(<span class="variable-name">task</span>);
+
+	  if (isRepaintTie()) repaint();
+		
+	}
+						</code></pre>
+				</section>
+				<section>
+					<legend>More complicated in actual</legend>
+					<ul style="margin-top: .5em;">
+						<li>
+							microtasks ------> promise
+						</li>
+					</ul>
+				</section>
+				<section>
+					<legend>special properties</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							microtask runs after every task	
+						</li>
+						<li style="margin-top: .5em">
+							if you hava multile tasks in the microtask queue, they are all going run 
+						</li>
+					</ul>
+				</section>
+				<section>
+						<legend>task queue</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+
+	let number = 0;
+
+	function start() {
+		document.getElementById('promise').innerHtml = number++;
+		setTimeout(start);
+	}
+					</code></pre>
+				</section>
+				<section>
+						<legend>microtask queue</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+
+	let number = 0;
+
+	function start() {
+	  Promise.resolve().then(addTen);
+	}
+
+	function addTen() {
+	  document.getElementById('promise').innerHtml = number++;
+	  Promise.resolve().then(addTen);
+	}
+
+					</code></pre>
+				</section>
+				<section>
+						<legend>event Loop</legend>
+							<pre><code data-noescape class="js" style="font-size: 1em">
+	while(true) {
+
+	  <span class="variable-name">queue</span> = getNextQueue();
+	  <span class="variable-name">task</span> = queue.pop();
+	  excute(<span class="variable-name">task</span>);
+	  
+	  while(microtaskQueue.hasTasks()) {
+		doMicroTask();
+	  }
+
+	  if (isRepaintTie()) repaint();
+		
+	}
+						</code></pre>
+				</section>
+				<section>
+					<legend>More complicated in actual</legend>
+					<ul style="margin-top: .5em;">
+						<li>
+							animation frame callback queue
+						</li>
+					</ul>
+				</section>
+				<section>
+						<legend>microtask queue</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+
+	requestAnimationFrame(() => {
+
+	  this.browser.classList.remove('slide')
+
+	  requestAnimationFrame(() => {
+	    this.browser.classList.add('slide')
+	  })
+
+	})
+
+					</code></pre>
+				</section>
+				<section>
+					<legend>special properties of animation frame callback</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							animation queue will run all the task in a Loop
+						</li>
+						<li style="margin-top: .5em">
+							new added task will not be running
+						</li>
+					</ul>
+				</section>
+				<section>
+						<legend>microtask queue</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+
+	while(true) {
+
+		<span class="variable-name">queue</span> = getNextQueue();
+		<span class="variable-name">task</span> = queue.pop();
+		excute(<span class="variable-name">task</span>);
+		
+		while(microtaskQueue.hasTasks()) {
+			doMicroTask();
+		}
+	
+		if (isRepaintTime()) {
+			animationTasks = animationQueue.copyTask();
+			for (task in animationTasks)
+				doAnimationTask(task)
+			repaint();
+		}
+			
+	}
+
+					</code></pre>
+				</section>
+				<section>
+					<img src="css/node.png" />
+				</section>
+				<section>
+					<legend>node</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							no script parsing events		
+						</li>
+						<li style="margin-top: .5em">
+							no task user interactions		
+						</li>
+						<li style="margin-top: .5em">
+							no animation frame callback
+						</li>
+						<li style="margin-top: .5em">
+							no rendering pipeline
+						</li>
+					</ul>
+				</section>
+				<section>
+					<legend>browser</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							event loop is going all the time	
+						</li>
+					</ul>
+				</section>
+				<section>
+					<legend>node</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							check if there are more task to do, if not, stop
+						</li>
+					</ul>
+				</section>
+				<section>
+					<legend>the node event loop</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							one queue for all of your event callback
+						</li>
+						<li style="margin-top: .5em">
+							one check queue
+						</li>
+						<li style="margin-top: .5em">
+							one queue for all of your timers for callback and set interval
+						</li>
+					</ul>
+				</section>
+				<section>
+					<legend>order of running</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							run every thing in the event callback
+						</li>
+						<li style="margin-top: .5em">
+							run every thing in the check queue
+						</li>
+						<li style="margin-top: .5em">
+							run everything in the time queue
+						</li>
+					</ul>
+				</section>
+				<section>
+					<legend>add stuff to the check phase</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							setImmediate
+						</li>
+					</ul>
+				</section>
+				<section>
+						<legend>task queue</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+	setTimeout(callback, 0)
+	setImmediate(callback)
+					</code></pre>
+				</section>
+				<section>
+					<legend>microtask queue of node</legend>
+					<ul style="margin-top: .5em;">
+						<li style="margin-top: .5em">
+							promise task queue 
+						</li>
+						<li style="margin-top: .5em">
+							nextTick queue
+						</li>
+					</ul>
+				</section>
+				<section>
+						<legend>node event Loop</legend>
+						<pre><code data-noescape class="js" style="font-size: 1em">
+
+	while(tasksAreWaiting()) {
+
+		<span class="variable-name">queue</span> = getNextQueue();
+		
+		while(queue.hasTasks()) {
+			task = queue.pop();
+			execute(tesk);
+
+			while(nextTickQueue.hasTasks()) {
+				doNextTickTask();
+			}
+
+			while(promiseTickQueue.hasTasks()) {
+				doPromiseTask();
+			}
+		}
+			
+	}
+
+					</code></pre>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				controls: false,
+				progress: false,
+				history: true,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

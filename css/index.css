@@ -1,0 +1,113 @@
+.reveal .slides h1 {
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-shadow: 4px 4px rgba(23,256,46,.5);
+}
+.mask {
+    overflow: hidden;
+    margin: auto;
+}
+svg.title {
+    transform: rotate(.5turn);
+    transform-origin: bottom;
+    animation: spin 3s ease-out forwards;
+    width: 80%;
+    fill: rgb(23,256,46);
+    font-size: .5em;
+}
+.variable-name{
+    color: greenyellow
+}
+
+@keyframes spin {
+    to { transform: rotate(1turn) }
+}
+
+.fragment{
+    display: inline-block;
+    width: 30%;
+    height: 30%;
+}
+
+.list-and-image {
+    display: flex;
+    font-size: 2em;
+    align-items: center;
+    justify-content: space-around;
+    margin: 1em;
+}
+.list-and-image img {
+    margin-left: 2em;
+    max-width: 33%
+}
+.list-and-image ul{
+    display: flex;
+    flex-direction: column;
+}
+.list-and-image ul li{
+    display: flex;
+    width: 100%;
+}
+
+.browser-internals {
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    border: 4px solid white;
+    padding: 1.5em 2em;
+    position: relative;
+  }
+  .browser-internals legend {
+    font-size: 2em;
+    padding: .25em;
+  }
+  .browser-internals .browser-bits {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    height: 90%;
+  }
+  .browser-internals img {
+    width: 15%;
+    margin: 0 4vmin;
+    padding: .5em;
+    display: flex;
+  }
+  .browser-internals task-source {
+    margin: 0 4vmin;
+    padding: .5em;
+  }
+  .browser-internals .html {
+    margin: 1em;
+    padding: .75em;
+  }
+  .browser-internals .html::before {
+    content: '</>';
+    display: block;
+    color: rgb(var(--green));
+    font-size: 8em;
+    font-family: var(--code-font);
+    font-weight: bold;
+  }
+  .browser-internals .html::after {
+    content: 'HTML & CSS';
+    font-size: 2em;
+  }
+  .browser-internals.web-apis .browser-bits *:not(#engine), .engine #engine.highlighted {
+    animation: pink-background-flash 1s cubic-bezier(0.555, 0.140, 0.390, 1.040) forwards;
+  }
+  .browser-internals.web-apis .browser-bits #web-apis {
+    animation: none;
+  }
+  @keyframes pink-background-flash {
+    50% {
+      background-color: rgba(var(--pink), 1);
+    }
+    to {
+      background-color: rgba(var(--pink), .75);
+    }
+  }
+
+   
